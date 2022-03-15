@@ -1,3 +1,6 @@
+/**
+ * Force class abstraction
+ */
 class Force {
     constructor() { }
     applyTo(pSystem) {
@@ -7,6 +10,9 @@ class Force {
     }
 }
 
+/**
+ * A constant gravity force
+ */
 class GravityForce extends Force {
     constructor(g) {
         super()
