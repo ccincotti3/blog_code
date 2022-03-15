@@ -31,6 +31,9 @@ class Particle {
     }
 }
 
+/**
+ * ParticleSystem maintains particles and forces within a system.
+ */
 class ParticleSystem {
     constructor() {
         this.particles = []
@@ -46,12 +49,20 @@ class ParticleSystem {
         return this.forces.length
     }
 
+    /**
+     * Add particle to system
+     * @param {Vec2} position 
+     */
     addParticle(position) {
         this.particles.push(new Particle(
             1, position
         ))
     }
 
+    /**
+     * Add force to system
+     * @param {Vec2} force 
+     */
     addForce(force) {
         if (!(force instanceof Force)) {
             throw ("Cannot addForce. Please use a real force")
@@ -60,29 +71,40 @@ class ParticleSystem {
         this.forces.push(force)
     }
 
+    /**
+     * Draw all the particles in the system
+     * @param {CanvasContext2D} ctx 
+     */
     draw(ctx) {
         this.particles.forEach(p => p.draw(ctx))
     }
 
+    /**
+     * Solve the particle system, which updates all the particles's position
+     * @param {number} deltaTs 
+     */
     solve(deltaTs) {
-        // Clear forces
+        // Clear force accumulators on all particles
         for (const particle of this.particles) {
             particle.clearForceAccumulator()
         }
 
+        // Apply all the forces on all the particles
         this.forces.forEach(f => {
             f.applyTo(this)
         })
 
+        // Update particles velocity and positions given that now we know the acceleration
+        // by way of force / mass: a = F / m
         this.particles.forEach((p) => {
             // Calculate acceleration step
-            const accelerationStep = new Vec2(0,0)
-            p.f.divideScalar(p.mass, accelerationStep)
+            const accelerationStep = new Vec2(0, 0)
+            p.f.divideScalar(p.mass, accelerationStep) // F / m
             accelerationStep.multiplyScalar(deltaTs, accelerationStep)
 
             p.velocity.add(accelerationStep, p.velocity)
 
-            // Calculate velocty step
+            // Calculate velocity step
             const velocityStep = p.velocity.clone()
             velocityStep.multiplyScalar(deltaTs, velocityStep)
             p.position.add(velocityStep, p.position)

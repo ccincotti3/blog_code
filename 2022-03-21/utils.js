@@ -92,3 +92,12 @@ const drawGrid = (ctx) => {
 const clearCanvas = (ctx) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
+
+/**
+ * Where all draw calls are done to set up canvas in animation loop
+ * @param {Canvas2DContext} ctx 
+ */
+function unimportantCanvasDrawStuff(ctx) {
+    clearCanvas(ctx)
+    drawGrid(ctx)
+}
