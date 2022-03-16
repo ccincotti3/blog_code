@@ -97,17 +97,7 @@ class ParticleSystem {
         // Update particles velocity and positions given that now we know the acceleration
         // by way of force / mass: a = F / m
         this.particles.forEach((p) => {
-            // Calculate acceleration step
-            const accelerationStep = new Vec2(0, 0)
-            p.f.divideScalar(p.mass, accelerationStep) // F / m
-            accelerationStep.multiplyScalar(deltaTs, accelerationStep)
-
-            p.velocity.add(accelerationStep, p.velocity)
-
-            // Calculate velocity step
-            const velocityStep = p.velocity.clone()
-            velocityStep.multiplyScalar(deltaTs, velocityStep)
-            p.position.add(velocityStep, p.position)
+            EulerStep(p, deltaTs) 
         })
 
     }

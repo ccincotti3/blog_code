@@ -27,7 +27,8 @@ const main = () => {
     let deltaTs = 0;
     let lastTs = 0;
 
-    const animate = (elapsedTs) => {
+    // Calculate new positions, then draw frame
+    const run = (elapsedTs) => {
         unimportantCanvasDrawStuff(ctx)
 
         // Store deltaTs, as that acts as our step time
@@ -41,10 +42,10 @@ const main = () => {
         ctx.restore()
 
         // Loop back
-        requestAnimationFrame(animate)
+        requestAnimationFrame(run)
     }
 
-    requestAnimationFrame(animate)
+    requestAnimationFrame(run)
 }
 
 
