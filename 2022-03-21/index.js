@@ -32,7 +32,7 @@ const main = () => {
     unimportantCanvasDrawStuff(ctx);
 
     // Store deltaTs, as that acts as our step time
-    deltaTs = currentElapsedTs - lastElaspedTs;
+    deltaTs = currentElapsedTs - lastElapsedTs;
     lastElapsedTs = currentElapsedTs;
 
     // Solve the system, then draw it.

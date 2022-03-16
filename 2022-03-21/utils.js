@@ -7,6 +7,10 @@ class Vec2 {
     this.y = y;
   }
 
+  some(cb) {
+    return cb(this.x) || cb(this.y);
+  }
+
   divide(rightHand, target) {
     target.x = this.x / rightHand.x;
     target.y = this.y / rightHand.y;

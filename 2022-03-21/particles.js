@@ -96,6 +96,17 @@ class ParticleSystem {
     // by way of force / mass: a = F / m
     this.particles.forEach((p) => {
       EulerStep(p, deltaTs);
+
+      // verify values for debugging purposes
+      if (p.f.some((val) => isNaN(val))) {
+        throw "Force is not a number";
+      }
+      if (p.velocity.some((val) => isNaN(val))) {
+        throw "Velocity is not a number";
+      }
+      if (p.position.some((val) => isNaN(val))) {
+        throw "Position is not a number";
+      }
     });
   }
 }
