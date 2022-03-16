@@ -16,6 +16,7 @@ class Vec2 {
     target.x = this.x + rightHand.x;
     target.y = this.y + rightHand.y;
   }
+
   sub(rightHand, target) {
     target.x = this.x - rightHand.x;
     target.y = this.y - rightHand.y;
@@ -25,6 +26,7 @@ class Vec2 {
     target.x = this.x + scalar;
     target.y = this.y + scalar;
   }
+
   multiplyScalar(scalar, target) {
     target.x = this.x * scalar;
     target.y = this.y * scalar;

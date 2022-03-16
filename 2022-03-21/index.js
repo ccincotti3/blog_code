@@ -25,15 +25,15 @@ const main = () => {
   });
 
   let deltaTs = 0;
-  let lastTs = 0;
+  let lastElapsedTs = 0;
 
   // Calculate new positions, then draw frame
-  const run = (elapsedTs) => {
+  const run = (currentElapsedTs) => {
     unimportantCanvasDrawStuff(ctx);
 
     // Store deltaTs, as that acts as our step time
-    deltaTs = elapsedTs - lastTs;
-    lastTs = elapsedTs;
+    deltaTs = currentElapsedTs - lastElaspedTs;
+    lastElapsedTs = currentElapsedTs;
 
     // Solve the system, then draw it.
     ctx.save();

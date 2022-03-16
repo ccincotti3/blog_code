@@ -16,7 +16,7 @@ class Force {
 class GravityForce extends Force {
   constructor(g) {
     super();
-    this.g = g;
+    this.force = g;
   }
 
   applyTo(pSystem) {

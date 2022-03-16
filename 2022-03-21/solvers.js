@@ -8,13 +8,13 @@
 function EulerStep(p, deltaTs) {
   // Calculate acceleration step
   const accelerationStep = new Vec2(0, 0);
-  p.f.divideScalar(p.mass, accelerationStep); // F / m
-  accelerationStep.multiplyScalar(deltaTs, accelerationStep);
+  p.f.divideScalar(p.mass, accelerationStep); // a = F / m
+  accelerationStep.multiplyScalar(deltaTs, accelerationStep); // a*Δt
 
-  p.velocity.add(accelerationStep, p.velocity);
+  p.velocity.add(accelerationStep, p.velocity); // vn = vo +  a*Δt
 
   // Calculate velocity step
   const velocityStep = p.velocity.clone();
-  velocityStep.multiplyScalar(deltaTs, velocityStep);
-  p.position.add(velocityStep, p.position);
+  velocityStep.multiplyScalar(deltaTs, velocityStep); // vn*Δt
+  p.position.add(velocityStep, p.position); // xn = x0 + vn*Δt
 }
