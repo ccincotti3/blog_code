@@ -81,6 +81,7 @@ class Vec2 {
  * @param {number} strokeWidth
  */
 function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
+  ctx.save()
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
   if (fill) {
@@ -92,6 +93,21 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }
+  ctx.restore()
+}
+
+function drawSpring(ctx, p1Pos, p2Pos) {
+  ctx.save()
+  const x_diff = p2Pos.x - p1Pos.x
+  const y_diff = p2Pos.y - p1Pos.y
+  // ctx.rotate(Math.atan2(y_diff, x_diff));
+  ctx.strokeStyle = "blue"
+  ctx.beginPath()
+  ctx.moveTo(p1Pos.x, p1Pos.y)
+  // ctx.bezierCurveTo()
+  ctx.lineTo(p2Pos.x, p2Pos.y)
+  ctx.stroke()
+  ctx.restore()
 }
 
 /**

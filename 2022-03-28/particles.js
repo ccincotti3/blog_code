@@ -3,13 +3,14 @@
  */
 class Particle {
   #f = new Vec2(0, 0); // force
-  constructor(mass, position) {
+  constructor(mass, position, staticNode) {
     if (!(position instanceof Vec2)) {
       throw "x not instance of Vec2";
     }
     this.mass = mass;
     this.position = position;
     this.velocity = new Vec2(0, 0);
+    this.static = staticNode
   }
 
   get f() {
@@ -38,6 +39,7 @@ class ParticleSystem {
   constructor() {
     this.particles = [];
     this.forces = [];
+    this.springs = [];
     this.time = undefined;
   }
 
@@ -51,12 +53,18 @@ class ParticleSystem {
 
   /**
    * Add particle to system
-   * @param {Vec2} position
+   * @param {Particle} particle
    */
-  addParticle(position) {
-    const particle = new Particle(1, position);
+  addParticle(particle) {
     this.particles.push(particle);
-    return particle;
+  }
+
+  /**
+   * Add particle to system
+   * @param {Spring} spring
+   */
+  addSpring(spring) {
+    this.springs.push(spring);
   }
 
   /**
@@ -77,6 +85,7 @@ class ParticleSystem {
    */
   draw(ctx) {
     this.particles.forEach((p) => p.draw(ctx));
+    this.springs.forEach((s) => s.draw(ctx));
   }
 
   /**

@@ -17,12 +17,24 @@ const main = () => {
   ctx.canvas.height = window.innerHeight;
 
   const particleSystem = new ParticleSystem();
-  const p1 = particleSystem.addParticle(new Vec2(50, 25));
-  const p2 = particleSystem.addParticle(new Vec2(50, 405));
-  particleSystem.addForce(new SpringForce(
-    p1, p2, 200, 0.1, .1)
-  )
-  // particleSystem.addForce(new GravityForce(0.000981));
+  const p1 = new Particle(1, new Vec2(200, 805), false);
+  const p2 = new Particle(1, new Vec2(300, 405), false);
+  const p3 = new Particle(1, new Vec2(300, 25), true);
+  particleSystem.addParticle(p1);
+  particleSystem.addParticle(p2);
+  particleSystem.addParticle(p3);
+
+  const spring = new Spring(
+    p1, p2, 200, 5, 5
+  ) 
+  const spring2 = new Spring(
+    p2, p3, 200, 5, 5
+  ) 
+  particleSystem.addSpring(spring)
+  particleSystem.addSpring(spring2)
+  particleSystem.addForce(new SpringForce(spring))
+  particleSystem.addForce(new SpringForce(spring2))
+  particleSystem.addForce(new GravityForce(9.81));
 
   canvas.addEventListener("click", (event) => {
     particleSystem.addParticle(new Vec2(event.clientX, event.clientY));
@@ -36,8 +48,8 @@ const main = () => {
     unimportantCanvasDrawStuff(ctx);
 
     // Store deltaTs, as that acts as our step time
-    // deltaTs = (currentElapsedTs - lastElapsedTs) / 1000;
-    deltaTs = 0.5; 
+    deltaTs = (currentElapsedTs - lastElapsedTs) / 1000;
+    // deltaTs = 0.5; 
     lastElapsedTs = currentElapsedTs;
 
     // Solve the system, then draw it.
