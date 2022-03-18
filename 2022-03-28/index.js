@@ -17,8 +17,12 @@ const main = () => {
   ctx.canvas.height = window.innerHeight;
 
   const particleSystem = new ParticleSystem();
-  particleSystem.addParticle(new Vec2(50, 25));
-  particleSystem.addForce(new GravityForce(0.000981));
+  const p1 = particleSystem.addParticle(new Vec2(50, 25));
+  const p2 = particleSystem.addParticle(new Vec2(50, 405));
+  particleSystem.addForce(new SpringForce(
+    p1, p2, 200, 0.1, .1)
+  )
+  // particleSystem.addForce(new GravityForce(0.000981));
 
   canvas.addEventListener("click", (event) => {
     particleSystem.addParticle(new Vec2(event.clientX, event.clientY));
@@ -32,7 +36,8 @@ const main = () => {
     unimportantCanvasDrawStuff(ctx);
 
     // Store deltaTs, as that acts as our step time
-    deltaTs = currentElapsedTs - lastElapsedTs;
+    // deltaTs = (currentElapsedTs - lastElapsedTs) / 1000;
+    deltaTs = 0.5; 
     lastElapsedTs = currentElapsedTs;
 
     // Solve the system, then draw it.

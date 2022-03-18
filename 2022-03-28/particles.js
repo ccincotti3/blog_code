@@ -54,7 +54,9 @@ class ParticleSystem {
    * @param {Vec2} position
    */
   addParticle(position) {
-    this.particles.push(new Particle(1, position));
+    const particle = new Particle(1, position);
+    this.particles.push(particle);
+    return particle;
   }
 
   /**

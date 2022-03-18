@@ -1,5 +1,9 @@
 /**
  * Vec2 utility class
+ *
+ * There's probably a way better way to handle updating the
+ * targets, but this will get us to a working Vec2 class
+ * for now
  */
 class Vec2 {
   constructor(x, y) {
@@ -14,35 +18,55 @@ class Vec2 {
   divide(rightHand, target) {
     target.x = this.x / rightHand.x;
     target.y = this.y / rightHand.y;
+    return target;
   }
 
   add(rightHand, target) {
     target.x = this.x + rightHand.x;
     target.y = this.y + rightHand.y;
+    return target;
   }
 
   sub(rightHand, target) {
     target.x = this.x - rightHand.x;
     target.y = this.y - rightHand.y;
+    return target;
   }
 
   addScalar(scalar, target) {
     target.x = this.x + scalar;
     target.y = this.y + scalar;
+    return target;
   }
 
   multiplyScalar(scalar, target) {
     target.x = this.x * scalar;
     target.y = this.y * scalar;
+    return target;
   }
 
   divideScalar(scalar, target) {
     target.x = this.x / scalar;
     target.y = this.y / scalar;
+    return target;
+  }
+
+  abs(target) {
+    target.x = Math.abs(this.x);
+    target.y = Math.abs(this.y);
+    return target;
+  }
+
+  magnitude() {
+    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
 
   clone() {
     return new Vec2(this.x, this.y);
+  }
+
+  dot(rightHand) {
+    return this.x * rightHand.x + this.y * rightHand.y;
   }
 }
 

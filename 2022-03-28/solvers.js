@@ -16,5 +16,6 @@ function EulerStep(p, deltaTs) {
   // Calculate velocity step
   const velocityStep = p.velocity.clone();
   velocityStep.multiplyScalar(deltaTs, velocityStep); // vn*Δt
+  debugger
   p.position.add(velocityStep, p.position); // xn = x0 + vn*Δt
 }
