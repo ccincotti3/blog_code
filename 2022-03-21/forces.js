@@ -22,7 +22,7 @@ class GravityForce extends Force {
   applyTo(pSystem) {
     super.applyTo(pSystem);
     const particles = pSystem.particles;
-    // Clear forces
+
     for (const particle of particles) {
       const mass = particle.mass;
       particle.applyForce(new Vec2(0, this.g * mass));
