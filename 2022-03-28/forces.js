@@ -22,10 +22,31 @@ class GravityForce extends Force {
   applyTo(pSystem) {
     super.applyTo(pSystem);
     const particles = pSystem.particles;
-    // Clear forces
+
     for (const particle of particles) {
       const mass = particle.mass;
       particle.applyForce(new Vec2(0, this.g * mass));
     }
+  }
+}
+
+/**
+ * A spring force between two particles
+ */
+class SpringForce extends Force {
+  constructor(particleOne, particleTwo) {
+    super();
+    this.p1 = particleOne;
+    this.p2 = particleTwo;
+  }
+
+  applyTo(_pSystem) {
+    super.applyTo(_pSystem);
+    // const particles = pSystem.particles;
+
+    // for (const particle of particles) {
+    //   const mass = particle.mass;
+    //   particle.applyForce(new Vec2(0, this.g * mass));
+    // }
   }
 }
