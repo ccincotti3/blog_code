@@ -44,42 +44,41 @@ class SpringForce extends Force {
   applyTo(_pSystem) {
     const { p1, p2, ks, kd, r } = this.spring
     const calculateForce = () => {
-      // Find distance between particles, save in l
-      const l = new Vec2(0, 0);
-      p1.position.sub(p2.position, l);
 
-      const l_magnitude = l.magnitude();
+      // Vector pointing from particle 2 to particle 1
+      const l = p1.position.clone().sub(p2.position)
+
+      // distance between particles
+      const distance = l.magnitude();
 
       // Find the time derivative of l (or p1.velocity - p2.velocity)
-      const l_prime = new Vec2(0, 0);
-      p1.velocity.sub(p2.velocity, l_prime);
+      const l_prime = p1.velocity.clone().sub(p2.velocity);
 
       // Calculate spring force magnitude ks * (|l| - r)
       // The spring force magnitude is proportional to the actual length and resting length
-      const springForceMagnitude = ks * (l_magnitude - r);
+      const springForceMagnitude = ks * (distance - r);
 
       // Calculate damping force magnitude kd * ((l_prime * l) / l_magnitude)
       const l_dot = l_prime.dot(l);
-      const dampingForceMagnitude = kd * (l_dot / l_magnitude);
+      const dampingForceMagnitude = kd * (l_dot / distance);
 
       // Calculate final force vector
       // fa = − [springForceMag + dampingForceMag] * (l / |l|)
-      const p1Force = new Vec2(0, 0);
-      l.divideScalar(l_magnitude, p1Force);
-      p1Force.multiplyScalar(
-        -1 * (springForceMagnitude + dampingForceMagnitude),
-        p1Force
+      const direction = l.clone().normalize();
+      return direction.multiplyScalar(
+        -1 * (springForceMagnitude + dampingForceMagnitude)
       );
-      return p1Force
     };
     const f1 = calculateForce()
     if(!p1.static) {
       p1.applyForce(f1)
     }
 
-    const f2 = f1.clone()
+    const f2 = f1.clone().multiplyScalar(-1)
     if(!p2.static) {
-      p2.applyForce(f2.multiplyScalar(-1, f2))
+      p2.applyForce(f2)
     }
+
+    console.log({ f1, f2 })
   }
 }

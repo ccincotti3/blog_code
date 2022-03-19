@@ -11,6 +11,7 @@ class Particle {
     this.position = position;
     this.velocity = new Vec2(0, 0);
     this.static = staticNode
+    this.damping = .95
   }
 
   get f() {

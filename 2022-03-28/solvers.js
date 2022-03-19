@@ -6,16 +6,14 @@
  * @param {number} deltaTs
  */
 function EulerStep(p, deltaTs) {
-  // Calculate acceleration step
-  const accelerationStep = new Vec2(0, 0);
-  p.f.divideScalar(p.mass, accelerationStep); // a = F / m
-  accelerationStep.multiplyScalar(deltaTs, accelerationStep); // a*Δt
+  // Calculate acceleration step, since we calculate total Force per frame,
+  // Im pretty sure that we don't need to involve deltaTs
+  const accelerationStep = p.f.clone().divideScalar(p.mass); // aΔt = F / m
 
-  p.velocity.add(accelerationStep, p.velocity); // vn = vo +  a*Δt
+  p.velocity.add(accelerationStep); // vn = vo +  a*Δt
+  p.velocity.multiplyScalar(p.damping)
 
   // Calculate velocity step
-  const velocityStep = p.velocity.clone();
-  velocityStep.multiplyScalar(deltaTs, velocityStep); // vn*Δt
-  debugger
-  p.position.add(velocityStep, p.position); // xn = x0 + vn*Δt
+  const velocityStep = p.velocity.clone().multiplyScalar(deltaTs); // vn*Δt
+  p.position.add(velocityStep); // xn = x0 + vn*Δt
 }

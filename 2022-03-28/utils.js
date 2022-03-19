@@ -15,46 +15,46 @@ class Vec2 {
     return cb(this.x) || cb(this.y);
   }
 
-  divide(rightHand, target) {
-    target.x = this.x / rightHand.x;
-    target.y = this.y / rightHand.y;
-    return target;
+  divide(byVec) {
+    this.x / byVec.x;
+    this.y / byVec.y;
+    return this
   }
 
-  add(rightHand, target) {
-    target.x = this.x + rightHand.x;
-    target.y = this.y + rightHand.y;
-    return target;
+  add(byVec) {
+    this.x += byVec.x;
+    this.y += byVec.y;
+    return this;
   }
 
-  sub(rightHand, target) {
-    target.x = this.x - rightHand.x;
-    target.y = this.y - rightHand.y;
-    return target;
+  sub(byVec) {
+   this.x -= byVec.x;
+   this.y -= byVec.y;
+   return this;
   }
 
-  addScalar(scalar, target) {
-    target.x = this.x + scalar;
-    target.y = this.y + scalar;
-    return target;
+  addScalar(scalar) {
+    this.x += scalar;
+    this.y += scalar;
+    return this
   }
 
-  multiplyScalar(scalar, target) {
-    target.x = this.x * scalar;
-    target.y = this.y * scalar;
-    return target;
+  multiplyScalar(scalar) {
+    this.x *= scalar;
+    this.y *= scalar;
+    return this
   }
 
-  divideScalar(scalar, target) {
-    target.x = this.x / scalar;
-    target.y = this.y / scalar;
-    return target;
+  divideScalar(scalar) {
+   this.x /= scalar;
+   this.y /= scalar;
+   return this
   }
 
-  abs(target) {
-    target.x = Math.abs(this.x);
-    target.y = Math.abs(this.y);
-    return target;
+  abs() {
+    this.x = Math.abs(this.x);
+    this.y = Math.abs(this.y);
+    return this;
   }
 
   magnitude() {
@@ -65,8 +65,14 @@ class Vec2 {
     return new Vec2(this.x, this.y);
   }
 
-  dot(rightHand) {
-    return this.x * rightHand.x + this.y * rightHand.y;
+  dot(byVec) {
+    return this.x * byVec.x + this.y * byVec.y;
+  }
+
+  normalize() {
+    const magnitude = this.magnitude()
+    this.divideScalar(magnitude)
+    return this
   }
 }
 
