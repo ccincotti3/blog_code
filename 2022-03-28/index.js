@@ -17,28 +17,26 @@ const main = () => {
   ctx.canvas.height = window.innerHeight;
 
   const particleSystem = new ParticleSystem();
+
+  /** * Intialize Particles and Springs */
   const p1 = new Particle(5, new Vec2(400, 805), false);
-  particleSystem.addParticle(p1);
   const p2 = new Particle(5, new Vec2(500, 805), false);
-  particleSystem.addParticle(p2);
-  const spring = new Spring(
-    p1, p2, 100, 5, .98
+  const spring1 = new Spring(
+    p1, p2, 100, 2, .5
   ) 
-  particleSystem.addSpring(spring)
-  particleSystem.addForce(new SpringForce(spring))
-
   const p3 = new Particle(10, new Vec2(500, 235), true);
-  particleSystem.addParticle(p3);
   const spring2 = new Spring(
-    p2, p3, 100, 5, .98
+    p2, p3, 100, 2, .5
   ) 
-  particleSystem.addSpring(spring2)
-  particleSystem.addForce(new SpringForce(spring2))
 
+  particleSystem.connect(p1, p2, spring1)
+  particleSystem.connect(p2, p3, spring2)
+
+  /** * Intialize Global forces */
   particleSystem.addForce(new GravityForce(9.81));
 
   canvas.addEventListener("click", (event) => {
-    particleSystem.addParticle(new Vec2(event.clientX, event.clientY));
+    particleSystem.addParticle(new Particle(1, new Vec2(event.clientX, event.clientY)), false);
   });
 
   let deltaTs = 0;

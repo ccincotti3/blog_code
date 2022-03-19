@@ -11,7 +11,7 @@ class Particle {
     this.position = position;
     this.velocity = new Vec2(0, 0);
     this.static = staticNode
-    this.damping = .95
+    this.damping = .98
   }
 
   get f() {
@@ -59,6 +59,19 @@ class ParticleSystem {
   addParticle(particle) {
     this.particles.push(particle);
   }
+  
+  /**
+   * Connect two particles in system by Spring
+   * @param {Particle} p1
+   * @param {Particle} p2
+   */
+  connect(p1, p2, spring) {
+    this.addParticle(p1)
+    this.addParticle(p2)
+    this.addSpring(spring)
+    this.addForce(new SpringForce(spring))
+  }
+
 
   /**
    * Add particle to system
