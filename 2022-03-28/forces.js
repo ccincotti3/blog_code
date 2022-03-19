@@ -77,7 +77,5 @@ class SpringForce extends Force {
     if (!p2.static) {
       p2.applyForce(f2);
     }
-
-    console.log({ f1, f2 });
   }
 }

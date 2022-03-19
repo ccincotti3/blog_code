@@ -13,8 +13,8 @@ const main = () => {
   const canvas = document.getElementById("container");
   const ctx = canvas.getContext("2d");
 
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+  ctx.canvas.width = canvas.parentElement.clientWidth;
+  ctx.canvas.height = canvas.parentElement.clientHeight;
 
   const particleSystem = new ParticleSystem();
 
@@ -31,30 +31,38 @@ const main = () => {
   /** * Intialize Global forces */
   particleSystem.addForce(new GravityForce(9.81));
 
-  canvas.addEventListener("click", (event) => {
-    particleSystem.addParticle(
-      new Particle(1, new Vec2(event.clientX, event.clientY)),
-      false
-    );
-  });
-
   let deltaTs = 0;
   let lastElapsedTs = 0;
 
+  canvas.addEventListener("pointerdown", (event) => {
+    const cursorPosition = getCursorPosition(canvas, event);
+    particleSystem.particles.forEach((p) => p.checkIfClicked(cursorPosition));
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    particleSystem.particles.forEach((p) => (p.dragging = false));
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    const cursorPosition = getCursorPosition(canvas, event);
+    particleSystem.particles.forEach((p) => {
+      if (p.dragging) {
+        p.drag(cursorPosition);
+      }
+    });
+  });
+
   // Calculate new positions, then draw frame
   const run = (currentElapsedTs) => {
-    unimportantCanvasDrawStuff(ctx);
+    clearCanvas(ctx);
 
     // Store deltaTs, as that acts as our step time
     deltaTs = (currentElapsedTs - lastElapsedTs) / 100;
-    // deltaTs = 0.05;
     lastElapsedTs = currentElapsedTs;
 
     // Solve the system, then draw it.
-    ctx.save();
     particleSystem.solve(deltaTs);
     particleSystem.draw(ctx);
-    ctx.restore();
 
     // Loop back
     requestAnimationFrame(run);

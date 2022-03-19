@@ -74,6 +74,12 @@ class Vec2 {
     this.divideScalar(magnitude);
     return this;
   }
+
+  copy(vec) {
+    this.x = vec.x;
+    this.y = vec.y;
+    return this;
+  }
 }
 
 /**
@@ -87,23 +93,18 @@ class Vec2 {
  * @param {number} strokeWidth
  */
 function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-  if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
-  }
-  if (stroke) {
-    ctx.lineWidth = strokeWidth;
-    ctx.strokeStyle = stroke;
-    ctx.stroke();
-  }
-  ctx.restore();
+  const circle = new Path2D();
+  circle.arc(x, y, radius, 0, 2 * Math.PI);
+
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = stroke;
+  ctx.fillStyle = fill;
+  ctx.stroke(circle);
+  ctx.fill(circle);
+  return circle;
 }
 
 function drawSpring(ctx, p1Pos, p2Pos) {
-  ctx.save();
   const x_diff = p2Pos.x - p1Pos.x;
   const y_diff = p2Pos.y - p1Pos.y;
   // ctx.rotate(Math.atan2(y_diff, x_diff));
@@ -113,43 +114,14 @@ function drawSpring(ctx, p1Pos, p2Pos) {
   // ctx.bezierCurveTo()
   ctx.lineTo(p2Pos.x, p2Pos.y);
   ctx.stroke();
-  ctx.restore();
 }
-
-/**
- * Helper function to draw grid on canvas
- * @param {Canvas2DContext} ctx
- */
-const drawGrid = (ctx) => {
-  const s = 28;
-  const pL = s;
-  const pT = s;
-  const pR = s;
-  const pB = s;
-
-  ctx.strokeStyle = "lightgrey";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (let x = pL; x <= ctx.canvas.width - pR; x += s) {
-    ctx.moveTo(x, pT);
-    ctx.lineTo(x, ctx.canvas.height - pB);
-  }
-  for (let y = pT; y <= ctx.canvas.height - pB; y += s) {
-    ctx.moveTo(pL, y);
-    ctx.lineTo(ctx.canvas.width - pR, y);
-  }
-  ctx.stroke();
-};
 
 const clearCanvas = (ctx) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.moveTo(0, 0);
 };
 
-/**
- * Where all draw calls are done to set up canvas in animation loop
- * @param {Canvas2DContext} ctx
- */
-function unimportantCanvasDrawStuff(ctx) {
-  clearCanvas(ctx);
-  drawGrid(ctx);
-}
+const getCursorPosition = (canvas, event) => {
+  const rect = canvas.getBoundingClientRect();
+  return new Vec2(event.clientX - rect.x, event.clientY - rect.y);
+};

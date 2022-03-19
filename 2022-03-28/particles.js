@@ -12,6 +12,13 @@ class Particle {
     this.velocity = new Vec2(0, 0);
     this.static = staticNode;
     this.damping = 0.98;
+    this.radius = 25;
+
+    // Click handling
+    this.dragging = false;
+    // Store an offset to use when updating the position on drag so center of circle
+    // is not drawn where mouse is located.
+    this.draggingPositionOffset = new Vec2(0, 0);
   }
 
   get f() {
@@ -29,7 +36,27 @@ class Particle {
   }
 
   draw(ctx) {
-    drawCircle(ctx, this.position.x, this.position.y, 25, "red", "black", 1);
+    drawCircle(
+      ctx,
+      this.position.x,
+      this.position.y,
+      this.radius,
+      "red",
+      "black",
+      1
+    );
+  }
+
+  drag(/*Vec2 */ mousePos) {
+    this.position.copy(mousePos).sub(this.draggingPositionOffset);
+  }
+
+  checkIfClicked(/*Vec2*/ clickPos) {
+    this.draggingPositionOffset = clickPos.clone().sub(this.position);
+    const distance = this.draggingPositionOffset.magnitude();
+    if (distance < this.radius) {
+      this.dragging = true;
+    }
   }
 }
 
