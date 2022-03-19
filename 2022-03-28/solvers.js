@@ -7,10 +7,13 @@
  */
 function EulerStep(p, deltaTs) {
   // Calculate acceleration step
-  const accelerationStep = p.f.clone().divideScalar(p.mass).multiplyScalar(deltaTs); // aΔt = F / m
+  const accelerationStep = p.f
+    .clone()
+    .divideScalar(p.mass)
+    .multiplyScalar(deltaTs); // aΔt = F / m
 
   p.velocity.add(accelerationStep); // vn = vo +  a*Δt
-  p.velocity.multiplyScalar(p.damping)
+  p.velocity.multiplyScalar(p.damping);
 
   // Calculate velocity step
   const velocityStep = p.velocity.clone().multiplyScalar(deltaTs); // vn*Δt

@@ -24,7 +24,7 @@ class GravityForce extends Force {
     const particles = pSystem.particles;
 
     for (const particle of particles) {
-      if(!particle.static) {
+      if (!particle.static) {
         const mass = particle.mass;
         particle.applyForce(new Vec2(0, this.g * mass));
       }
@@ -38,15 +38,14 @@ class GravityForce extends Force {
 class SpringForce extends Force {
   constructor(spring) {
     super();
-    this.spring = spring
+    this.spring = spring;
   }
 
   applyTo(_pSystem) {
-    const { p1, p2, ks, kd, r } = this.spring
+    const { p1, p2, ks, kd, r } = this.spring;
     const calculateForce = () => {
-
       // Vector pointing from particle 2 to particle 1
-      const l = p1.position.clone().sub(p2.position)
+      const l = p1.position.clone().sub(p2.position);
 
       // distance between particles
       const distance = l.magnitude();
@@ -69,16 +68,16 @@ class SpringForce extends Force {
         -1 * (springForceMagnitude + dampingForceMagnitude)
       );
     };
-    const f1 = calculateForce()
-    if(!p1.static) {
-      p1.applyForce(f1)
+    const f1 = calculateForce();
+    if (!p1.static) {
+      p1.applyForce(f1);
     }
 
-    const f2 = f1.clone().multiplyScalar(-1)
-    if(!p2.static) {
-      p2.applyForce(f2)
+    const f2 = f1.clone().multiplyScalar(-1);
+    if (!p2.static) {
+      p2.applyForce(f2);
     }
 
-    console.log({ f1, f2 })
+    console.log({ f1, f2 });
   }
 }

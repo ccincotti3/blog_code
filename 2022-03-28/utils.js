@@ -18,7 +18,7 @@ class Vec2 {
   divide(byVec) {
     this.x / byVec.x;
     this.y / byVec.y;
-    return this
+    return this;
   }
 
   add(byVec) {
@@ -28,27 +28,27 @@ class Vec2 {
   }
 
   sub(byVec) {
-   this.x -= byVec.x;
-   this.y -= byVec.y;
-   return this;
+    this.x -= byVec.x;
+    this.y -= byVec.y;
+    return this;
   }
 
   addScalar(scalar) {
     this.x += scalar;
     this.y += scalar;
-    return this
+    return this;
   }
 
   multiplyScalar(scalar) {
     this.x *= scalar;
     this.y *= scalar;
-    return this
+    return this;
   }
 
   divideScalar(scalar) {
-   this.x /= scalar;
-   this.y /= scalar;
-   return this
+    this.x /= scalar;
+    this.y /= scalar;
+    return this;
   }
 
   abs() {
@@ -70,9 +70,9 @@ class Vec2 {
   }
 
   normalize() {
-    const magnitude = this.magnitude()
-    this.divideScalar(magnitude)
-    return this
+    const magnitude = this.magnitude();
+    this.divideScalar(magnitude);
+    return this;
   }
 }
 
@@ -87,7 +87,7 @@ class Vec2 {
  * @param {number} strokeWidth
  */
 function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
-  ctx.save()
+  ctx.save();
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
   if (fill) {
@@ -99,21 +99,21 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }
-  ctx.restore()
+  ctx.restore();
 }
 
 function drawSpring(ctx, p1Pos, p2Pos) {
-  ctx.save()
-  const x_diff = p2Pos.x - p1Pos.x
-  const y_diff = p2Pos.y - p1Pos.y
+  ctx.save();
+  const x_diff = p2Pos.x - p1Pos.x;
+  const y_diff = p2Pos.y - p1Pos.y;
   // ctx.rotate(Math.atan2(y_diff, x_diff));
-  ctx.strokeStyle = "blue"
-  ctx.beginPath()
-  ctx.moveTo(p1Pos.x, p1Pos.y)
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(p1Pos.x, p1Pos.y);
   // ctx.bezierCurveTo()
-  ctx.lineTo(p2Pos.x, p2Pos.y)
-  ctx.stroke()
-  ctx.restore()
+  ctx.lineTo(p2Pos.x, p2Pos.y);
+  ctx.stroke();
+  ctx.restore();
 }
 
 /**
