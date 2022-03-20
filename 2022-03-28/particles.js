@@ -3,6 +3,11 @@
  */
 class Particle {
   #f = new Vec2(0, 0); // force
+  #dragging = false; // boolean describing if a particle is being dragged
+
+  // Store an offset to use when updating the position on drag so center of circle
+  // is not drawn where mouse is located.
+  #draggingPositionOffset = new Vec2(0, 0);
   constructor(mass, position, staticNode) {
     if (!(position instanceof Vec2)) {
       throw "x not instance of Vec2";
@@ -13,19 +18,25 @@ class Particle {
     this.static = staticNode;
     this.damping = 0.98;
     this.radius = 25;
-
-    // Click handling
-    this.dragging = false;
-    // Store an offset to use when updating the position on drag so center of circle
-    // is not drawn where mouse is located.
-    this.draggingPositionOffset = new Vec2(0, 0);
   }
 
   get f() {
     return this.#f;
   }
 
+  get isDragging() {
+    return this.#dragging;
+  }
+
+  /**
+   * @param {boolean} isDragging
+   */
+  set isDragging(isDragging) {
+    this.#dragging = isDragging;
+  }
+
   applyForce(f) {
+    if (this.#dragging) return;
     this.#f.x += f.x;
     this.#f.y += f.y;
   }
@@ -48,15 +59,19 @@ class Particle {
   }
 
   drag(/*Vec2 */ mousePos) {
-    this.position.copy(mousePos).sub(this.draggingPositionOffset);
+    this.position.copy(mousePos).sub(this.#draggingPositionOffset);
   }
 
-  checkIfClicked(/*Vec2*/ clickPos) {
-    this.draggingPositionOffset = clickPos.clone().sub(this.position);
-    const distance = this.draggingPositionOffset.magnitude();
-    if (distance < this.radius) {
-      this.dragging = true;
+  wasMouseOver(/*Vec2*/ clickPos) {
+    if (!this.#dragging) {
+      this.#draggingPositionOffset = clickPos.clone().sub(this.position);
     }
+    const distance = this.#draggingPositionOffset.magnitude();
+    if (distance < this.radius) {
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -68,7 +83,6 @@ class ParticleSystem {
     this.particles = [];
     this.forces = [];
     this.springs = [];
-    this.time = undefined;
   }
 
   get nparticles() {
@@ -80,31 +94,24 @@ class ParticleSystem {
   }
 
   /**
-   * Add particle to system
-   * @param {Particle} particle
+   * Add particles to system
+   * @param {Particle[]} particles
    */
-  addParticle(particle) {
-    this.particles.push(particle);
+  addParticles(particles) {
+    particles.forEach((p) => {
+      this.particles.push(p);
+    });
   }
 
   /**
-   * Connect two particles in system by Spring
-   * @param {Particle} p1
-   * @param {Particle} p2
+   * Add spring and force to system
+   * @param {Spring[]} springs
    */
-  connect(p1, p2, spring) {
-    this.addParticle(p1);
-    this.addParticle(p2);
-    this.addSpring(spring);
-    this.addForce(new SpringForce(spring));
-  }
-
-  /**
-   * Add particle to system
-   * @param {Spring} spring
-   */
-  addSpring(spring) {
-    this.springs.push(spring);
+  addSprings(springs) {
+    springs.forEach((s) => {
+      this.springs.push(s);
+      this.addForce(new SpringForce(s));
+    });
   }
 
   /**

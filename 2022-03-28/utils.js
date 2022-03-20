@@ -125,3 +125,18 @@ const getCursorPosition = (canvas, event) => {
   const rect = canvas.getBoundingClientRect();
   return new Vec2(event.clientX - rect.x, event.clientY - rect.y);
 };
+
+const withCursorInformation = (event, canvas, particleSystem, cb) => {
+  const cursorPosition = getCursorPosition(canvas, event);
+  const withShiftModifier = event.shiftKey;
+  const withCtrlModifier = event.ctrlKey;
+  const mousedOverParticle = particleSystem.particles.find((p) =>
+    p.wasMouseOver(cursorPosition)
+  );
+  return cb(
+    mousedOverParticle,
+    cursorPosition,
+    withShiftModifier,
+    withCtrlModifier
+  );
+};

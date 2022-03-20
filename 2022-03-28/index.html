@@ -9,6 +9,7 @@
       body {
         margin: 0;
       }
+
       canvas {
         width: 100%;
         height: 100%;
@@ -29,6 +30,7 @@
       }
     </style>
   </head>
+
   <body>
     <div class="grid">
       <canvas id="container"></canvas>
@@ -40,4 +42,23 @@
   <script src="./springs.js"></script>
   <script src="./particles.js"></script>
   <script src="./index.js"></script>
+  <script>
+    const canvas = document.getElementById("container");
+
+    const particles = [];
+    const springs = [];
+
+    const p1 = new Particle(5, new Vec2(400, 805), false);
+    const p2 = new Particle(5, new Vec2(500, 805), false);
+    const p3 = new Particle(10, new Vec2(500, 235), true);
+    particles.push(p1);
+    particles.push(p2);
+    particles.push(p3);
+
+    const s1 = new Spring(p1, p2, 100, 2, 0.5);
+    const s2 = new Spring(p2, p3, 100, 2, 0.5);
+    springs.push(s1);
+    springs.push(s2);
+    startParticleSimulation(canvas, particles, springs);
+  </script>
 </html>

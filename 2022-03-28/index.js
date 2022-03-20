@@ -9,8 +9,7 @@
  * Also runs the main animation loop, thus this function never terminates
  * unless an error is thrown.
  */
-const main = () => {
-  const canvas = document.getElementById("container");
+const startParticleSimulation = (canvas, particles, springs) => {
   const ctx = canvas.getContext("2d");
 
   ctx.canvas.width = canvas.parentElement.clientWidth;
@@ -18,15 +17,12 @@ const main = () => {
 
   const particleSystem = new ParticleSystem();
 
-  /** * Intialize Particles and Springs */
-  const p1 = new Particle(5, new Vec2(400, 805), false);
-  const p2 = new Particle(5, new Vec2(500, 805), false);
-  const spring1 = new Spring(p1, p2, 100, 2, 0.5);
-  const p3 = new Particle(10, new Vec2(500, 235), true);
-  const spring2 = new Spring(p2, p3, 100, 2, 0.5);
+  let addSpringMode = false;
+  let springToAdd = null;
 
-  particleSystem.connect(p1, p2, spring1);
-  particleSystem.connect(p2, p3, spring2);
+  /** * Intialize Particles and Springs */
+  particleSystem.addParticles(particles);
+  particleSystem.addSprings(springs);
 
   /** * Intialize Global forces */
   particleSystem.addForce(new GravityForce(9.81));
@@ -35,21 +31,66 @@ const main = () => {
   let lastElapsedTs = 0;
 
   canvas.addEventListener("pointerdown", (event) => {
-    const cursorPosition = getCursorPosition(canvas, event);
-    particleSystem.particles.forEach((p) => p.checkIfClicked(cursorPosition));
+    withCursorInformation(
+      event,
+      canvas,
+      particleSystem,
+      (
+        clickedParticle,
+        cursorPosition,
+        withShiftModifier,
+        withCtrlModifier
+      ) => {
+        if (clickedParticle) {
+          if (withShiftModifier) {
+            clickedParticle.static = !clickedParticle.static;
+          } else if (withCtrlModifier) {
+            addSpringMode = true;
+            springToAdd = new Spring(
+              clickedParticle,
+              new Particle(5, cursorPosition, true),
+              100,
+              2,
+              0.5
+            );
+          } else clickedParticle.isDragging = true;
+        } else {
+          particleSystem.addParticles([new Particle(5, cursorPosition, true)]);
+        }
+      }
+    );
   });
 
   canvas.addEventListener("pointerup", (event) => {
-    particleSystem.particles.forEach((p) => (p.dragging = false));
+    withCursorInformation(event, canvas, particleSystem, (targetParticle) => {
+      if (addSpringMode) {
+        if (targetParticle) {
+          springToAdd.p2 = targetParticle;
+          particleSystem.addSprings([springToAdd]);
+        }
+      }
+      particleSystem.particles.forEach((p) => (p.isDragging = false));
+      addSpringMode = false;
+    });
   });
 
   canvas.addEventListener("pointermove", (event) => {
-    const cursorPosition = getCursorPosition(canvas, event);
-    particleSystem.particles.forEach((p) => {
-      if (p.dragging) {
-        p.drag(cursorPosition);
+    withCursorInformation(
+      event,
+      canvas,
+      particleSystem,
+      (_, cursorPosition) => {
+        if (addSpringMode) {
+          springToAdd.p2.position.copy(cursorPosition);
+          return;
+        }
+        particleSystem.particles.forEach((p) => {
+          if (p.isDragging) {
+            p.drag(cursorPosition);
+          }
+        });
       }
-    });
+    );
   });
 
   // Calculate new positions, then draw frame
@@ -64,11 +105,12 @@ const main = () => {
     particleSystem.solve(deltaTs);
     particleSystem.draw(ctx);
 
+    if (addSpringMode) {
+      springToAdd.draw(ctx);
+    }
     // Loop back
     requestAnimationFrame(run);
   };
 
   requestAnimationFrame(run);
 };
-
-main();
