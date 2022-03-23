@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carmen's Particle Dynamics</title>
+    <style>
+      body {
+        margin: 8px;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+        border: 2px solid black;
+        box-sizing: border-box;
+      }
+
+      .grid {
+        height: 600px;
+        width: 800px;
+        margin: 0 auto;
+        background-image: repeating-linear-gradient(
+            #ccc 0 1px,
+            transparent 1px 100%
+          ),
+          repeating-linear-gradient(90deg, #ccc 0 1px, transparent 1px 100%);
+        background-size: 71px 71px;
+      }
+
+      .stats {
+        display: flex;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Carmen's Particle Dynamics Simulator</h1>
+    <div class="grid">
+      <canvas id="container"></canvas>
+      <div class="stats">
+        <div>
+          <h2>Particles</h2>
+          <ul class="particleList"></ul>
+        </div>
+        <div>
+          <h2>Springs</h2>
+          <ul class="springList"></ul>
+        </div>
+      </div>
+      <div>
+        <div>How to use:</div>
+        <div>- Click to add Particles</div>
+        <div>- Click on particle and drag to move</div>
+        <div>
+          - SHIFT + Click to make a particle static (unaffected by forces)
+        </div>
+        <div>
+          - CTRL + Click and drag to create a new spring. Drag must finish on
+          another particle.
+        </div>
+        <small>NOTE: This is a prototype and not production ready.</small>
+      </div>
+    </div>
+  </body>
+  <script src="./utils.js"></script>
+  <script src="./object.js"></script>
+  <script src="./solvers.js"></script>
+  <script src="./forces.js"></script>
+  <script src="./springs.js"></script>
+  <script src="./particles.js"></script>
+  <script src="./particleSystem.js"></script>
+  <script src="./index.js"></script>
+  <script>
+    const canvas = document.getElementById("container");
+    const ctx = canvas.getContext("2d");
+
+    ctx.canvas.width = canvas.parentElement.clientWidth;
+    ctx.canvas.height = canvas.parentElement.clientHeight;
+
+    const particles = [];
+    const springs = [];
+    const globalForces = [];
+
+    const p1 = new Particle(5, new Vec2(280, 350), false);
+    const p2 = new Particle(5, new Vec2(420, 369), false);
+    const p3 = new Particle(5, new Vec2(385, 226), true);
+    const p4 = new Particle(5, new Vec2(179, 225), true);
+    const p5 = new Particle(5, new Vec2(592, 265), true);
+    const p6 = new Particle(5, new Vec2(209, 309), true);
+    const p7 = new Particle(5, new Vec2(260, 475), false);
+    particles.push(p1);
+    particles.push(p2);
+    particles.push(p3);
+    particles.push(p4);
+    particles.push(p5);
+    particles.push(p6);
+    particles.push(p7);
+
+    const s1 = new Spring(p1, p2, 100, 2, 0.5);
+    const s2 = new Spring(p2, p3, 100, 2, 0.5);
+    const s3 = new Spring(p5, p3, 100, 2, 0.5);
+    const s4 = new Spring(p2, p5, 100, 2, 0.5);
+    const s5 = new Spring(p2, p4, 100, 2, 0.5);
+    const s6 = new Spring(p4, p3, 100, 2, 0.5);
+    const s7 = new Spring(p2, p7, 100, 2, 0.5);
+    const s8 = new Spring(p6, p7, 100, 2, 0.5);
+    springs.push(s1);
+    springs.push(s2);
+    springs.push(s3);
+    springs.push(s4);
+    springs.push(s5);
+    springs.push(s6);
+    springs.push(s7);
+    springs.push(s8);
+
+    const f1 = new GravityForce(9.81);
+    globalForces.push(f1);
+
+    const particleSystem = new ParticleSystem(particles, springs, globalForces);
+
+    let addSpringMode = false;
+    let springToAdd = null;
+
+    const particleStatsContainer = document.querySelector(".particleList");
+    const springStatsContainer = document.querySelector(".springList");
+    // statsContainer.addEventListener("pointerdown", (e) => {
+    //   if (e.target && e.target.nodeName === "LI") {
+    //     event.target.classList.add("selected");
+    //   }
+    // });
+
+    const updateStatList = () => {
+      particleStatsContainer.innerHTML = "";
+      particleSystem.particles.forEach((p) => {
+        particleStatsContainer.innerHTML += `
+          <li class="particle">
+            Position: {${p.position.x}, ${p.position.y}} \n
+            Mass: <input min="1" max="100" id="${p.id}" type="number" value=${p.mass} /> \n
+          </li> 
+        `;
+      });
+
+      springStatsContainer.innerHTML = "";
+      particleSystem.springs.forEach((s) => {
+        springStatsContainer.innerHTML += `
+          <li class="spring">
+            ks: <input step="0.01" min="0.01" max="20" id="${s.id}.ks" type="number" value=${s.ks} /> \n
+            kd: <input step="0.01" min="0.01" max="20" id="${s.id}.kd" type="number" value=${s.kd} /> \n
+            restLength: <input min="1" max="1000" id="${s.id}.r" type="number" value=${s.r} /> \n
+          </li> 
+        `;
+      });
+      const particleListItems =
+        particleStatsContainer.querySelectorAll("li.particle input");
+      if (particleListItems) {
+        particleListItems.forEach((item) =>
+          item.addEventListener("change", (event) => {
+            const particleId = event.target.id;
+            const particle = particleSystem.particles.find(
+              (p) => p.id === particleId
+            );
+            particle.mass = event.target.value;
+          })
+        );
+      }
+      const springListItems =
+        springStatsContainer.querySelectorAll("li.spring input");
+      if (springListItems) {
+        springListItems.forEach((item) =>
+          item.addEventListener("change", (event) => {
+            const id = event.target.id;
+            const [springId, springProperty] = id.split(".");
+            const spring = particleSystem.springs.find(
+              (s) => s.id === springId
+            );
+            spring[springProperty] = event.target.value;
+          })
+        );
+      }
+    };
+    updateStatList();
+
+    const withCursorInformation = (event, cb) => {
+      const cursorPosition = getCursorPosition(canvas, event);
+      const withShiftModifier = event.shiftKey;
+      const withCtrlModifier = event.ctrlKey;
+      const mousedOverParticle = particleSystem.particles.find((p) =>
+        p.wasMouseOver(cursorPosition)
+      );
+      return cb(
+        mousedOverParticle,
+        cursorPosition,
+        withShiftModifier,
+        withCtrlModifier
+      );
+    };
+
+    canvas.addEventListener("pointerdown", (event) => {
+      withCursorInformation(
+        event,
+        (
+          clickedParticle,
+          cursorPosition,
+          withShiftModifier,
+          withCtrlModifier
+        ) => {
+          if (clickedParticle) {
+            if (withShiftModifier) {
+              clickedParticle.static = !clickedParticle.static;
+            } else if (withCtrlModifier) {
+              addSpringMode = true;
+              springToAdd = new Spring(
+                clickedParticle,
+                new Particle(5, cursorPosition, true),
+                100,
+                2,
+                0.5
+              );
+            } else clickedParticle.isDragging = true;
+          } else {
+            particleSystem.addParticles([
+              new Particle(5, cursorPosition, true),
+            ]);
+            updateStatList();
+          }
+        }
+      );
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      withCursorInformation(event, (targetParticle) => {
+        if (addSpringMode) {
+          if (targetParticle && targetParticle.id !== springToAdd.p1.id) {
+            springToAdd.p2 = targetParticle;
+            particleSystem.addSprings([springToAdd]);
+            updateStatList();
+          }
+        }
+        particleSystem.particles.forEach((p) => (p.isDragging = false));
+        addSpringMode = false;
+      });
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      withCursorInformation(event, (_, cursorPosition) => {
+        if (addSpringMode) {
+          springToAdd.p2.position.copy(cursorPosition);
+          return;
+        }
+        particleSystem.particles.forEach((p) => {
+          if (p.isDragging) {
+            p.drag(cursorPosition);
+          }
+        });
+      });
+    });
+
+    const drawCb = () => {
+      if (addSpringMode) {
+        springToAdd.draw(ctx);
+      }
+    };
+
+    startParticleSimulation(ctx, particleSystem, drawCb);
+  </script>
+</html>
