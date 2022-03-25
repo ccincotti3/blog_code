@@ -104,23 +104,35 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
   return circle;
 }
 
+/**
+ * Helper function to draw lines between springs
+ * @param {Canvas2DContext} ctx
+ * @param {Vec2} p1Pos
+ * @param {Vec2} p2Pos
+ */
 function drawSpring(ctx, p1Pos, p2Pos) {
-  const x_diff = p2Pos.x - p1Pos.x;
-  const y_diff = p2Pos.y - p1Pos.y;
-  // ctx.rotate(Math.atan2(y_diff, x_diff));
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(p1Pos.x, p1Pos.y);
-  // ctx.bezierCurveTo()
   ctx.lineTo(p2Pos.x, p2Pos.y);
   ctx.stroke();
 }
 
+/**
+ * Helper function to clear canvas
+ * @param {Canvas2DContext} ctx
+ */
 const clearCanvas = (ctx) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.moveTo(0, 0);
 };
 
+/**
+ * Helper function to return mouse location on canvas element
+ * @param {Canvas2DContext} canvas
+ * @param {Event} event
+ * @returns Vec2
+ */
 const getCursorPosition = (canvas, event) => {
   const rect = canvas.getBoundingClientRect();
   return new Vec2(event.clientX - rect.x, event.clientY - rect.y);

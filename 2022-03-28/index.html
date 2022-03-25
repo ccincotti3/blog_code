@@ -83,6 +83,7 @@
     ctx.canvas.width = canvas.parentElement.clientWidth;
     ctx.canvas.height = canvas.parentElement.clientHeight;
 
+    // INIT STARTING CONFIGURATION
     const particles = [];
     const springs = [];
     const globalForces = [];
@@ -127,13 +128,9 @@
     let addSpringMode = false;
     let springToAdd = null;
 
+    // INIT UI EVENT HANDLERS
     const particleStatsContainer = document.querySelector(".particleList");
     const springStatsContainer = document.querySelector(".springList");
-    // statsContainer.addEventListener("pointerdown", (e) => {
-    //   if (e.target && e.target.nodeName === "LI") {
-    //     event.target.classList.add("selected");
-    //   }
-    // });
 
     const updateStatList = () => {
       particleStatsContainer.innerHTML = "";
@@ -261,6 +258,7 @@
       });
     });
 
+    // Pass in this draw callback so that when we're drawing a spring, its drawn onto the canvas
     const drawCb = () => {
       if (addSpringMode) {
         springToAdd.draw(ctx);

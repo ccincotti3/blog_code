@@ -1,3 +1,7 @@
+/**
+ * Spring class that stores references between two particules
+ * and its own properties
+ */
 class Spring extends Object {
   constructor(particleOne, particleTwo, restLength, kSpring, kDamping) {
     super();
