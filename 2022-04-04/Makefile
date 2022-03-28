@@ -10,4 +10,4 @@ matrix.o: matrix.c
 	gcc -c matrix.c
 
 clean:
-	rm *.o out
+	rm -f *.o *.txt *.c.swp out
