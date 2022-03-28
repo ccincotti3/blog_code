@@ -4,35 +4,46 @@
  * @brief Examples of implicit differentation
  * @version 0.1
  * @date 2022-03-26
- * 
+ *
  */
 #include <stdio.h>
 #include "matrix.h"
 
 int main() {
-    // y_1 = y_0 + h * f(x_1, y_1)
-    // y_1 - h * f(x_1, y_1) = y_0
+    float x0 = 100000.0;
+    float y0 = 100.0;
 
-    // set IVP y(0) = 1
-    // float y0 = 1.0;
-    // float x0 = 0.0; 
-    // float h = 0.2;
-    // float xf = 1.0; 
+    float h = 1;
+    int maxSteps = 10;
 
-    // float x1 = x0;
+    float k = 1.0;
 
-    // while(x0 < xf) {
-    //     x1 += h;
+    // Xnew = X0 + hf(Xnew)
+    Matrix Xnew = MatCreate(2, 1);
+    Matrix X0 = MatCreate(2, 1);
+    MatSet(&Xnew, 0, 0, x0);
+    MatSet(&Xnew, 1, 0, y0);
 
-    // }
+    // X0 + dX = X0 + hf(X0 + dX).
+    Matrix dX = MatCreate(2, 2);
+    MatSet(&dX, 0, 0, -h / (h + 1.0));
+    MatSet(&dX, 1, 1, -h / (k*h + 1.0));
 
-    Matrix m1 = MatCreate(2, 2);
-    MatSet(&m1, 0, 0, 1.0);
-    MatSet(&m1, 1, 1, 2.0);
-    float value = MatGet(&m1, 0, 0);
-    float value_two = MatGet(&m1, 1, 1);
-    printf("%f\n%f\n", value, value_two);
-    MatDestroy(&m1);
+    Matrix TempDeltaX = MatCreate(2,2);
+
+    for(int i = 0; i < maxSteps;++i) {
+        MatPrint(&Xnew);
+        MatSet(&X0, 0, 0, MatGet(&Xnew, 0, 0));
+        MatSet(&X0, 1, 0, MatGet(&Xnew, 1, 0) * k);
+        TempDeltaX = MatMultiply(&dX, &X0);
+        MatAdd(&Xnew, &Xnew, &TempDeltaX);
+    }
+
+    MatPrint(&Xnew);
+   
+    // Clean up
+    MatDestroy(&X0);
+    MatDestroy(&dX);
 
     return 0;
 }
