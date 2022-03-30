@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @author Carmen Cincotti (carmencincotti.com)
- * @brief Examples of implicit differentation
+ * @brief Solver for backwards Euler (implicit) and forwards Euler (explicit)
  * @version 0.1
  * @date 2022-03-26
  *
