@@ -23,7 +23,7 @@ int solve(float x0, float y0, float stepSize, Matrix hTerm, float k, FILE* fp) {
     Matrix TempDeltaX = MatCreate(2, 2);
 
     for (int i = 0; i < maxSteps;++i) {
-        fprintf(fp, "%f\t %f\n", stepSize * i, y0);
+        fprintf(fp, "%f\t %f\n", x0, y0);
 
         MatSet(&dX, 0, 0, x0);
         MatSet(&dX, 1, 0, y0 * k);
