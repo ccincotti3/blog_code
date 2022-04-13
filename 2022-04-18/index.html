@@ -75,7 +75,7 @@
             new Float32Array(vertexBuffer.getMappedRange()).set(vertices);
             vertexBuffer.unmap();
 
-            const vertexBuffers = [{
+            const vertexBuffersDescriptors = [{
                 attributes: [
                     {
                         shaderLocation: 0,
@@ -117,11 +117,12 @@
                 `
             });
 
+            // CREATE RENDER PIPELINE
             const pipeline = device.createRenderPipeline({
                 vertex: {
                     module: shaderModule,
                     entryPoint: 'vertex_main',
-                    buffers: vertexBuffers
+                    buffers: vertexBuffersDescriptors
                 },
                 fragment: {
                     module: shaderModule,
