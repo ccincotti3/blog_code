@@ -92,6 +92,7 @@
                 stepMode: "vertex"
             }];
 
+            // ~~ DEFINE BASIC SHADERS ~~
             const shaderModule = device.createShaderModule({
                 code: `
                     struct VertexOut {
@@ -117,7 +118,7 @@
                 `
             });
 
-            // CREATE RENDER PIPELINE
+            // ~~ CREATE RENDER PIPELINE ~~
             const pipeline = device.createRenderPipeline({
                 vertex: {
                     module: shaderModule,
@@ -138,6 +139,7 @@
                 },
             });
 
+            // ~~ Define render loop ~~
             function frame() {
                 const commandEncoder = device.createCommandEncoder();
                 const textureView = context.getCurrentTexture().createView();
