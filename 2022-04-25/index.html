@@ -22,6 +22,7 @@
       referrerpolicy="no-referrer"
     ></script>
     <script>
+      const { mat4, mat3, vec3 } = glMatrix;
       const init = async () => {
         // ~~ INITIALIZE ~~ Make sure we can initialize WebGPU
         if (!navigator.gpu) {
@@ -125,12 +126,17 @@
                         @location(0) color : vec4<f32>,
                     };
 
+                    struct Uniforms {
+                        modelViewProjectionMatrix : mat4x4<f32>,
+                    };
+                    @binding(0) @group(0) var<uniform> uniforms : Uniforms;
+
                     @stage(vertex)
                     fn vertex_main(@location(0) position: vec4<f32>,
                                 @location(1) color: vec4<f32>) -> VertexOut
                     {
                         var output : VertexOut;
-                        output.position = position;
+                        output.position = uniforms.modelViewProjectionMatrix * position;
                         output.color = color;
                         return output;
                     } 
@@ -193,9 +199,38 @@
             },
           ],
         };
+        // const projectionMatrix = mat4.create();
+        const aspect = canvas.width / canvas.height;
+        const projectionMatrix = mat4.create();
+        mat4.perspective(projectionMatrix, (2 * Math.PI) / 5, aspect, 1, 100.0);
+        const getTransformationMatrix = () => {
+            const viewMatrix = mat4.create();
+            mat4.translate(viewMatrix, viewMatrix, vec3.fromValues(0, 0, -4));
+            const now = Date.now() / 1000;
+            mat4.rotate(
+            viewMatrix,
+            viewMatrix,
+            1,
+            vec3.fromValues(Math.sin(now), Math.cos(now), 0)
+            );
+
+            const modelViewProjectionMatrix = mat4.create();
+            mat4.multiply(modelViewProjectionMatrix, projectionMatrix, viewMatrix);
+
+            return modelViewProjectionMatrix;
+        }
+
 
         // ~~ DEFINE RENDER LOOP ~~
         function frame() {
+            const transformationMatrix = getTransformationMatrix()
+            device.queue.writeBuffer(
+                uniformBuffer,
+                0,
+                transformationMatrix.buffer,
+                transformationMatrix.byteOffset,
+                transformationMatrix.byteLength
+            );
           renderPassDescriptor.colorAttachments[0].view = context
             .getCurrentTexture()
             .createView();
@@ -204,6 +239,7 @@
             commandEncoder.beginRenderPass(renderPassDescriptor);
 
           passEncoder.setPipeline(pipeline);
+          passEncoder.setBindGroup(0, uniformBindGroup);
           passEncoder.setVertexBuffer(0, vertexBuffer);
           passEncoder.draw((segments + 1) * 4); // number of points to draw for grid
           passEncoder.end();
